@@ -1,0 +1,42 @@
+-- Fish It Mobile Script
+-- Auto Fish + Anti AFK
+-- Simple & Stable (Android Friendly)
+
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local VirtualUser = game:GetService("VirtualUser")
+
+local AUTO = true
+local CAST_DELAY = 1.2
+local REEL_DELAY = 0.8
+
+-- AUTO FISH
+task.spawn(function()
+    while task.wait(CAST_DELAY) do
+        if AUTO then
+            local tool = char:FindFirstChildOfClass("Tool")
+            if tool then
+                if tool:FindFirstChild("Cast") then
+                    pcall(function()
+                        tool.Cast:FireServer()
+                    end)
+                end
+
+                task.wait(REEL_DELAY)
+
+                if tool:FindFirstChild("Reel") then
+                    pcall(function()
+                        tool.Reel:FireServer(true)
+                    end)
+                end
+            end
+        end
+    end
+end)
+
+-- ANTI AFK
+player.Idled:Connect(function()
+    VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+    task.wait(1)
+    VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+end)
